@@ -12,34 +12,95 @@ console.log('its working');
 (d) Away Team goals for 2014 world cup final
 (e) Winner of 2014 world cup final */
 
+function getIndex(data, year, stage){
+
+    for(let i = 0; i < data.length; i++){
+        if(data[i].Year === year && data[i].Stage === stage){
+            return i;
+        }
+    }
+}
+
+function getWinner2014(){
+    let winner = 0;
+    let home = fifaData[828]["Home Team Goals"];
+    let away = fifaData[828]["Away Team Goals"];
+
+    if(home > away){
+        winner = fifaData[828]["Home Team Name"];
+    }
+    else if(away > home){
+        winner = fifaData[828]["Away Team Name"];
+    }
+    else{
+        winner = null;
+    }
+
+    return winner;
+}
+
+console.log(getIndex(fifaData, 2014, "Final"));
+
+console.log(fifaData[828]["Home Team Name"]);
+
+console.log(fifaData[828]["Away Team Name"]);
+
+console.log(fifaData[828]["Home Team Goals"]);
+
+console.log(fifaData[828]["Away Team Goals"]);
+
+console.log(getWinner2014());
+
 
 /* Task 2: Create a function called  getFinals that takes `data` as an argument and returns an array of objects with only finals data */
 
-function getFinals(/* code here */) {
+function getFinals(data) {
+    let finalData = data.filter((item) => item.Stage === "Final");
 
-    /* code here */
-
+    return finalData;
 };
+
+console.log(getFinals(fifaData));
 
 /* Task 3: Implement a higher-order function called `getYears` that accepts the callback function `getFinals`, and returns an array called `years` containing all of the years in the dataset */
 
-function getYears(/* code here */) {
+function getYears(callback) {
 
-    /* code here */
+    let years = [];
 
-};
+    let last = callback;
 
-getYears();
+    last.forEach((item)=> years.push(item.Year));
+    
+    return years;
+}
+
+console.log(getYears(getFinals(fifaData)));
+
 
 /* Task 5: Implement a higher-order function called `getWinners`, that accepts the callback function `getFinals()` and determine the winner (home or away) of each `finals` game. Return the name of all winning countries in an array called `winners` */ 
 
-function getWinners(/* code here */) {
+function getWinners(callback) {
 
-    /* code here */
+     let winners = [];
+
+     callback.forEach((item)=>{
+         if(item["Home Team Goals"] > item["Away Team Goals"]){
+             winners.push(item["Home Team Name"])
+         }
+         else if(item["Home Team Goals"] < item["Away Team Goals"]){
+             winners.push(item["Away Team Name"]);
+         }
+         else{
+             winners.push(item["Win conditions"].split(" ")[0]);
+         }
+     });
+
+     return winners;
 
 };
 
-getWinners();
+console.log(getWinners(getFinals(fifaData)));
 
 /* Task 6: Implement a higher-order function called `getWinnersByYear` that accepts the following parameters and returns a set of strings "In {year}, {country} won the world cup!" 
 
@@ -48,21 +109,26 @@ Parameters:
  * callback function getYears
  */
 
-function getWinnersByYear(/* code here */) {
-
-};
-
-getWinnersByYear();
+function getWinnersByYear(years_callback, winners_callback) {
+    for(let i = 0; i<years_callback.length; i++){
+           let string =`In ${years_callback[i]}, ${winners_callback[i]} won the world cup!`;
+            console.log(string);
+        }
+    }
+ 
+getWinnersByYear(getYears(getFinals(fifaData)),getWinners(getFinals(fifaData)));
 
 /* Task 7: Write a function called `getAverageGoals` that accepts a parameter `data` and returns the the average number of home team goals and away team goals scored per match (Hint: use .reduce and do this in 2 steps) */
 
-function getAverageGoals(/* code here */) {
+function getAverageGoals(data) {
 
-    /* code here */
+    let avgHome = data.reduce((total, item, index) => total + data[index]["Home Team Goals"] / data.length, 0);
+    let avgAway = data.reduce((total, item, index) => total + data[index]["Away Team Goals"] / data.length, 0);
 
+    return "Average Home Goals: " + avgHome + " Average Away Goals: " + avgAway;
 };
 
-getAverageGoals();
+console.log(getAverageGoals(fifaData));
 
 /// STRETCH 🥅 //
 
